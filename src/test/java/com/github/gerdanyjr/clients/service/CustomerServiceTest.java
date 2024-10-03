@@ -7,7 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -184,5 +187,20 @@ public class CustomerServiceTest {
         // then
         assertEquals("Customer not found with id: " + 1L, e.getMessage());
 
+    }
+
+    @DisplayName("Should delete customer when a valid id is passed")
+    @Test
+    void givenValidId_whenDelete_thenDeleteCustomer() {
+        // given
+        when(customerRepository.findById(anyLong()))
+                .thenReturn(Optional.of(customer));
+        // when
+        customerService.deleteCustomer(1L);
+
+        // then
+        verify(customerRepository,
+                times(1))
+                .delete(customer);
     }
 }
