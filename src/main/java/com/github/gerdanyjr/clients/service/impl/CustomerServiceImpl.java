@@ -51,9 +51,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer updateCustomer(Long id, Customer customer) {
-        Optional<Customer> foundCustomer = customerRepository.findById(id);
+        Customer foundCustomer = customerRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Customer not found with id: " + id));
         BeanUtils.copyProperties(customer, foundCustomer);
-        return customerRepository.save(foundCustomer.get());
+        return customerRepository.save(foundCustomer);
     }
 
     @Override
