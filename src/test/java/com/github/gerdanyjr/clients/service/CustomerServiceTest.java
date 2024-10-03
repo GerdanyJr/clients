@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -202,5 +203,23 @@ public class CustomerServiceTest {
         verify(customerRepository,
                 times(1))
                 .delete(customer);
+    }
+
+    @DisplayName("Should throw a exception when a invalid id is passed to delete")
+    @Test
+    void givenInvalidId_whenDelete_thenThrowException() {
+        // given
+        when(customerRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        // when & then
+        Exception ex = assertThrows(NotFoundException.class, () -> {
+            customerService.deleteCustomer(1L);
+        });
+
+        // then
+        assertEquals("Customer not found with id: " + 1L, ex.getMessage());
+        verify(customerRepository, never())
+                .delete(any(Customer.class));
     }
 }
