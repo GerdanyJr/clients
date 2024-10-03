@@ -6,6 +6,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -161,10 +162,27 @@ public class CustomerServiceTest {
         customer.setCpf(cpf);
         when(customerRepository.save(customer))
                 .thenReturn(customer);
-                
+
         // when
         Customer updated = customerService.updateCustomer(1L, customer);
         // then
         assertEquals(cpf, updated.getCpf());
+    }
+
+    @DisplayName("Should throw a exception when a invalid id is passed to update")
+    @Test
+    void givenInvalidId_whenUpdate_thenThrowException() {
+        // given
+        when(customerRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        // when & then
+        Exception e = assertThrows(NotFoundException.class, () -> {
+            customerService.updateCustomer(1L, any(Customer.class));
+        });
+
+        // then
+        assertEquals("Customer not found with id: " + 1L, e.getMessage());
+
     }
 }
