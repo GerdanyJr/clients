@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.github.gerdanyjr.clients.exception.ConflictException;
+import com.github.gerdanyjr.clients.exception.NotFoundException;
 import com.github.gerdanyjr.clients.model.Customer;
 import com.github.gerdanyjr.clients.repository.CustomerRepository;
 import com.github.gerdanyjr.clients.service.CustomerService;
@@ -33,7 +34,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer findById(Long id) {
-        return customerRepository.findById(id).get();
+        Customer foundById = customerRepository
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException("Customer not found with id " + id));
+        return foundById;
     }
 
     @Override
