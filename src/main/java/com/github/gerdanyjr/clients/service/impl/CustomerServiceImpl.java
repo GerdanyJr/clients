@@ -42,8 +42,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer findByCpf(String cpf) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findByCpf'");
+        Optional<Customer> foundCustomer = customerRepository.findByCpf(cpf);
+        return foundCustomer
+                .orElseThrow(() -> new NotFoundException("Customer not found with cpf " + cpf));
     }
 
     @Override
