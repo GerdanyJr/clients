@@ -59,8 +59,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void deleteCustomer(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteCustomer'");
+        Customer foundCustomer = customerRepository.findById(id).get();
+        customerRepository.delete(foundCustomer);
     }
 
 }
