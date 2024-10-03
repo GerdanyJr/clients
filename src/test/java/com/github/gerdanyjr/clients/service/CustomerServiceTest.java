@@ -86,4 +86,21 @@ public class CustomerServiceTest {
         assertEquals(2, customers.size());
     }
 
+    @DisplayName("Should return Customer when a valid id is passed to findById")
+    @Test
+    void givenValidId_whenFindById_thenReturnCustomerWithId() {
+        // given
+        customer.setId(1L);
+        when(customerRepository
+                .findById(1L))
+                .thenReturn(Optional.of(customer));
+
+        // when
+        Customer foundCustomer = customerService.findById(1L);
+
+        // then
+        assertNotNull(foundCustomer);
+        assertEquals(1L, foundCustomer.getId());
+    }
+
 }

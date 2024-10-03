@@ -12,7 +12,7 @@ public interface CustomerService {
 
     List<Customer> findAll();
 
-    Customer findById(String id);
+    Customer findById(Long id);
 
     Customer findByCpf(String cpf);
 
