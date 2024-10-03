@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.github.gerdanyjr.clients.exception.ConflictException;
+import com.github.gerdanyjr.clients.exception.NotFoundException;
 import com.github.gerdanyjr.clients.model.Customer;
 import com.github.gerdanyjr.clients.repository.CustomerRepository;
 import com.github.gerdanyjr.clients.service.impl.CustomerServiceImpl;
@@ -101,6 +102,20 @@ public class CustomerServiceTest {
         // then
         assertNotNull(foundCustomer);
         assertEquals(1L, foundCustomer.getId());
+    }
+
+    @DisplayName("Should throw NotFoundException when a invalid id is passed to findById")
+    @Test
+    void givenInvalidId_whenFindById_thenThrowException() {
+        // given
+        when(customerRepository
+                .findById(1L))
+                .thenReturn(Optional.empty());
+
+        // when & then
+        assertThrows(NotFoundException.class, () -> {
+            customerService.findById(1L);
+        });
     }
 
 }
