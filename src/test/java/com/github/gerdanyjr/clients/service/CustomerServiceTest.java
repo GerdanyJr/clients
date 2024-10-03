@@ -6,6 +6,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -118,4 +119,35 @@ public class CustomerServiceTest {
         });
     }
 
+    @DisplayName("Should return a customer when a valid cpf is passed")
+    @Test
+    void givenValidCpf_whenFindByCpf_thenReturnCustomer() {
+        // given
+        when(customerRepository.findByCpf(anyString()))
+                .thenReturn(Optional.of(customer));
+
+        // when
+        Customer customer = customerService.findByCpf("12345678");
+
+        // then
+        assertNotNull(customer);
+    }
+
+    @DisplayName("Should throw a exception when a invalid cpf is passed")
+    @Test
+    void givenInvalidCpf_whenFindByCpf_thenThrowException() {
+        // given
+        String cpf = "12345678";
+        when(customerRepository.findByCpf(cpf))
+                .thenReturn(Optional.empty());
+
+        // when & then
+        Exception e = assertThrows(NotFoundException.class, () -> {
+            customerService
+                    .findByCpf("12345678");
+        });
+
+        // then 
+        assertEquals("Customer not found with cpf " + cpf, e.getMessage());
+    }
 }
