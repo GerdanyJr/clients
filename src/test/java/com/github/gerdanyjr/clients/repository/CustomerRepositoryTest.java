@@ -63,4 +63,21 @@ public class CustomerRepositoryTest {
                 .getId(),
                 1L);
     }
+
+    @DisplayName("Should return customer when findByCpf with a registered cpf is passed")
+    @Test
+    void givenValidCpf_whenFindByCpf_thenReturnCustomer() {
+        // given
+        customerRepository.save(customer);
+
+        // when
+        Optional<Customer> foundCustomer = customerRepository.findByCpf(customer.getCpf());
+
+        // then
+        assertTrue(foundCustomer.isPresent());
+        assertEquals(foundCustomer
+                .get()
+                .getCpf(),
+                customer.getCpf());
+    }
 }
