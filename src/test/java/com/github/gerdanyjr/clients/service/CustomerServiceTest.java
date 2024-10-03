@@ -1,6 +1,7 @@
 package com.github.gerdanyjr.clients.service;
 
 import java.util.Optional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -67,6 +68,22 @@ public class CustomerServiceTest {
         assertThrows(ConflictException.class, () -> {
             customerService.createCustomer(customer);
         });
+    }
+
+    @DisplayName("Should return a Customer List when findAll")
+    @Test
+    void whenFindAll_thenReturnCustomerList() {
+        // given
+        when(customerRepository
+                .findAll())
+                .thenReturn(List.of(customer, customer));
+
+        // when
+        List<Customer> customers = customerService.findAll();
+
+        // then
+        assertNotNull(customers);
+        assertEquals(2, customers.size());
     }
 
 }
