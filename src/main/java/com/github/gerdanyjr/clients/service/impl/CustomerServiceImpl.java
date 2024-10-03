@@ -3,6 +3,8 @@ package com.github.gerdanyjr.clients.service.impl;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
+
 import com.github.gerdanyjr.clients.exception.ConflictException;
 import com.github.gerdanyjr.clients.exception.NotFoundException;
 import com.github.gerdanyjr.clients.model.Customer;
@@ -48,13 +50,14 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer updateCustomer(String id, Customer customer) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateCustomer'");
+    public Customer updateCustomer(Long id, Customer customer) {
+        Optional<Customer> foundCustomer = customerRepository.findById(id);
+        BeanUtils.copyProperties(customer, foundCustomer);
+        return customerRepository.save(foundCustomer.get());
     }
 
     @Override
-    public void deleteCustomer(String id) {
+    public void deleteCustomer(Long id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deleteCustomer'");
     }
