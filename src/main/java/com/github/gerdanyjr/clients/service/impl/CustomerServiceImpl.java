@@ -16,8 +16,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer createCustomer(Customer customer) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createCustomer'");
+        return customerRepository.save(customer);
     }
 
     @Override

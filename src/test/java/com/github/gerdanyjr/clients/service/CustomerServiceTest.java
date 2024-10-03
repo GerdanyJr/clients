@@ -50,4 +50,5 @@ public class CustomerServiceTest {
         assertNotNull(newCustomer);
         assertEquals(newCustomer.getEmail(), newCustomer.getEmail());
     }
+
 }
