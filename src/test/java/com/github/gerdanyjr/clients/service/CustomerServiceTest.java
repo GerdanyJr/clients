@@ -147,7 +147,24 @@ public class CustomerServiceTest {
                     .findByCpf("12345678");
         });
 
-        // then 
+        // then
         assertEquals("Customer not found with cpf " + cpf, e.getMessage());
+    }
+
+    @DisplayName("should update customer when a valid customer is passed")
+    @Test
+    void givenValidCustomer_whenUpdate_thenUpdateCustomer() {
+        // given
+        String cpf = "12345321";
+        when(customerRepository.findById(1L))
+                .thenReturn(Optional.of(customer));
+        customer.setCpf(cpf);
+        when(customerRepository.save(customer))
+                .thenReturn(customer);
+                
+        // when
+        Customer updated = customerService.updateCustomer(1L, customer);
+        // then
+        assertEquals(cpf, updated.getCpf());
     }
 }
