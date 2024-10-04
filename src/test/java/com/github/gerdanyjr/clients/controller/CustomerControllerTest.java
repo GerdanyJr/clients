@@ -1,5 +1,8 @@
 package com.github.gerdanyjr.clients.controller;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -73,5 +76,23 @@ public class CustomerControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON));
 
                 response.andExpect(MockMvcResultMatchers.status().is(409));
+        }
+
+        @DisplayName("Should return Customer list when findAll")
+        @Test
+        void whenFindAll_thenReturnCustomers() throws Exception {
+                List<Customer> customers = List.of(customer, customer);
+                when(customerService.findAll())
+                                .thenReturn(customers);
+
+                ResultActions response = mockMvc
+                                .perform(MockMvcRequestBuilders.get("/customers")
+                                                .contentType(MediaType.APPLICATION_JSON));
+
+                response
+                                .andExpect(MockMvcResultMatchers.status().isOk())
+                                .andExpect(MockMvcResultMatchers
+                                                .content()
+                                                .json(objectMapper.writeValueAsString(customers)));
         }
 }
