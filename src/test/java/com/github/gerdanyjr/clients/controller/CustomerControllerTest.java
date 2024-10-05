@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,8 +17,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -61,8 +60,8 @@ public class CustomerControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON));
 
                 response
-                                .andExpect(MockMvcResultMatchers.status().is(201))
-                                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName")
+                                .andExpect(status().is(201))
+                                .andExpect(jsonPath("$.firstName")
                                                 .value(customer.getFirstName()));
         }
 
@@ -73,11 +72,11 @@ public class CustomerControllerTest {
                                 .createCustomer(any(Customer.class)))
                                 .thenThrow(ConflictException.class);
 
-                ResultActions response = mockMvc.perform(MockMvcRequestBuilders.post("/customers")
+                ResultActions response = mockMvc.perform(post("/customers")
                                 .content(objectMapper.writeValueAsString(customer))
                                 .contentType(MediaType.APPLICATION_JSON));
 
-                response.andExpect(MockMvcResultMatchers.status().is(409));
+                response.andExpect(status().is(409));
         }
 
         @DisplayName("Should return Customer list when findAll")
@@ -88,13 +87,12 @@ public class CustomerControllerTest {
                                 .thenReturn(customers);
 
                 ResultActions response = mockMvc
-                                .perform(MockMvcRequestBuilders.get("/customers")
+                                .perform(get("/customers")
                                                 .contentType(MediaType.APPLICATION_JSON));
 
                 response
-                                .andExpect(MockMvcResultMatchers.status().isOk())
-                                .andExpect(MockMvcResultMatchers
-                                                .content()
+                                .andExpect(status().isOk())
+                                .andExpect(content()
                                                 .json(objectMapper.writeValueAsString(customers)));
         }
 
@@ -105,16 +103,13 @@ public class CustomerControllerTest {
                                 .thenReturn(customer);
 
                 ResultActions response = mockMvc
-                                .perform(MockMvcRequestBuilders
-                                                .get("/customers/" + customer.getId())
+                                .perform(get("/customers/" + customer.getId())
                                                 .contentType(MediaType.APPLICATION_JSON));
 
                 response
-                                .andExpect(MockMvcResultMatchers
-                                                .jsonPath("$.id").value(customer.getId()))
-                                .andExpect(MockMvcResultMatchers.status().isOk())
-                                .andExpect(MockMvcResultMatchers
-                                                .content()
+                                .andExpect(jsonPath("$.id").value(customer.getId()))
+                                .andExpect(status().isOk())
+                                .andExpect(content()
                                                 .json(objectMapper.writeValueAsString(customer)));
         }
 
@@ -125,10 +120,9 @@ public class CustomerControllerTest {
                                 .thenThrow(NotFoundException.class);
 
                 ResultActions response = mockMvc
-                                .perform(MockMvcRequestBuilders
-                                                .get("/customers/" + customer.getId())
+                                .perform(get("/customers/" + customer.getId())
                                                 .contentType(MediaType.APPLICATION_JSON));
 
-                response.andExpect(MockMvcResultMatchers.status().isNotFound());
+                response.andExpect(status().isNotFound());
         }
 }
