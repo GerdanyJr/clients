@@ -2,8 +2,8 @@ package com.github.gerdanyjr.clients.controller;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.gerdanyjr.clients.exception.ConflictException;
+import com.github.gerdanyjr.clients.exception.NotFoundException;
 import com.github.gerdanyjr.clients.model.Customer;
 import com.github.gerdanyjr.clients.service.CustomerService;
 
@@ -41,6 +42,7 @@ public class CustomerControllerTest {
         @BeforeEach
         void setup() {
                 customer = new Customer(
+                                1L,
                                 "First",
                                 "Last",
                                 "123456789",
@@ -94,5 +96,39 @@ public class CustomerControllerTest {
                                 .andExpect(MockMvcResultMatchers
                                                 .content()
                                                 .json(objectMapper.writeValueAsString(customers)));
+        }
+
+        @DisplayName("Should return Customer when a valid id is passed")
+        @Test
+        void givenValidId_whenFindById_thenReturnCustomer() throws Exception {
+                when(customerService.findById(anyLong()))
+                                .thenReturn(customer);
+
+                ResultActions response = mockMvc
+                                .perform(MockMvcRequestBuilders
+                                                .get("/customers/" + customer.getId())
+                                                .contentType(MediaType.APPLICATION_JSON));
+
+                response
+                                .andExpect(MockMvcResultMatchers
+                                                .jsonPath("$.id").value(customer.getId()))
+                                .andExpect(MockMvcResultMatchers.status().isOk())
+                                .andExpect(MockMvcResultMatchers
+                                                .content()
+                                                .json(objectMapper.writeValueAsString(customer)));
+        }
+
+        @DisplayName("Should return 404 when a invalid customer id is passed")
+        @Test
+        void givenInvalidId_whenFindById_thenReturn404() throws Exception {
+                when(customerService.findById(anyLong()))
+                                .thenThrow(NotFoundException.class);
+
+                ResultActions response = mockMvc
+                                .perform(MockMvcRequestBuilders
+                                                .get("/customers/" + customer.getId())
+                                                .contentType(MediaType.APPLICATION_JSON));
+
+                response.andExpect(MockMvcResultMatchers.status().isNotFound());
         }
 }
